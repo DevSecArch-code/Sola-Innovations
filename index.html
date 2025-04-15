@@ -8,101 +8,82 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- MODIFY -->
-    <meta name="title" content="Security Strategy Evaluation Tool" />
-    <meta name="description" content="Evaluate the readiness of security tools across various domains" />
-    <meta name="author" content="Javier Olmedo" />
+    <meta name="title" content="Cybersecurity Innovation Coverage Calculator" />
+    <meta name="description" content="Assess innovation coverage across cybersecurity domains and capabilities." />
+    <meta name="author" content="Idan Pinto" />
     <link rel="shortcut icon" href="img/favicon.ico" />
-    <title>Security Strategy Evaluation Tool</title>
+    <title>Cybersecurity Innovation Coverage Calculator</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="css/bootstrap.min.css" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
 
-  <!-- MAIN -->
   <body>
     <main>
       <section>
-        <h1>Security Strategy Evaluation Tool</h1>
+        <h1>Cybersecurity Innovation Coverage Calculator</h1>
         <canvas class="riskChart" id="riskChart" height="75"></canvas>
         <div class="risk RS">
           <h4>0</h4>
         </div>
       </section>
 
-      <!-- FIRST -->
+      <!-- SECURITY DOMAINS -->
       <div class="row">
-        <!-- SECURITY DOMAINS -->
         <section>
-          <h5 class="border-bottom">Select Security Domain</h5>
+          <h5 class="border-bottom">Security Domains</h5>
           <div class="row">
-            <div class="h6 nomargin col-4 d-flex align-items-center">Security Domain</div>
-            <div class="col-8">
-              <select class="form-control" id="securityDomain" name="securityDomain" onchange="calculate()">
-                <option value="Cloud Security">Cloud Security</option>
-                <option value="Application Security">Application Security</option>
-                <option value="Data Security">Data Security</option>
-                <option value="Identity Security">Identity Security</option>
-                <option value="SaaS Security">SaaS Security</option>
-                <option value="External Attack Surface">External Attack Surface</option>
-                <option value="Runtime Security">Runtime Security</option>
-                <option value="API Security">API Security</option>
-                <option value="Threat Detection">Threat Detection</option>
-                <option value="Incident Response">Incident Response</option>
-                <option value="Security Operations">Security Operations</option>
-                <option value="Intelligence">Intelligence</option>
-                <option value="Compliance">Compliance</option>
-                <option value="Code Security">Code Security</option>
-              </select>
-            </div>
-          </div>
-        </section>
-
-        <!-- PRODUCT METRICS -->
-        <section>
-          <h5 class="border-bottom">Product Metrics of Cyber Security Tool Readiness</h5>
-          <div class="row">
-            <div class="h6 nomargin col-4 d-flex align-items-center">Metric</div>
-            <div class="col-8">
-              <select class="form-control" id="metric" name="metric" onchange="calculate()">
-                <option value="1">Ease of Integration (1)</option>
-                <option value="2">User Friendliness (2)</option>
-                <option value="3">Performance and Reliability (3)</option>
-                <option value="4">Compliance with Standards (4)</option>
-                <option value="5">Scalability (5)</option>
-              </select>
+            <div class="col-12">
+              <ul>
+                <li>Data Security</li>
+                <li>Identity Security</li>
+                <li>SaaS Security</li>
+                <li>External Attack Surface</li>
+                <li>Runtime Security</li>
+                <li>API Security</li>
+                <li>Threat Detection</li>
+                <li>Incident Response</li>
+                <li>Security Operations</li>
+                <li>Intelligence</li>
+                <li>Compliance</li>
+                <li>Code Security</li>
+              </ul>
             </div>
           </div>
         </section>
       </div>
 
-      <!-- SECOND -->
+      <!-- CAPABILITIES -->
       <div class="row">
-        <!-- TECHNICAL IMPACT FACTORS -->
         <section>
-          <h5 class="border-bottom" title="Technical impact can be broken down into factors aligned with the traditional security areas of concern: confidentiality, integrity, availability, and accountability. The goal is to estimate the magnitude of the impact on the system if the vulnerability were to be exploited.">Technical Impact Factors</h5>
+          <h5 class="border-bottom">Product Capabilities</h5>
           <div class="row">
-            <div class="h6 nomargin col-4 d-flex align-items-center" title="How much data could be disclosed and how sensitive is it?">Cloud Security</div>
-            <div class="col-8">
-              <select class="form-control" id="lc" name="lc" onchange="calculate()">
-                <option value="2">Minimal non-sensitive data disclosed (2)</option>
-                <option value="6">Extensive non-sensitive data disclosed (6)</option>
-                <option value="7">Extensive critical data disclosed (7)</option>
-                <option value="9">All data disclosed (9)</option>
-              </select>
+            <div class="col-12">
+              <ul>
+                <li>Metadata (Configuration)</li>
+                <li>Events/Logs</li>
+                <li>Real-time Monitoring</li>
+                <li>Threat Detection</li>
+                <li>Data Enrichment</li>
+              </ul>
             </div>
           </div>
+        </section>
+      </div>
+
+      <!-- INNOVATION SCORE -->
+      <div class="row">
+        <section>
+          <h5 class="border-bottom">Innovation Coverage Score</h5>
+          <h6 class="IS nomargin">0</h6>
         </section>
       </div>
 
       <!-- CREDITS -->
       <section>
         <div>
-          <b>VECTOR: </b><a id="score" href="https://javierolmedo.github.io/OWASP-Calculator/?vector=(SL:1/M:1/O:0/S:2/ED:1/EE:1/A:1/ID:2/LC:2/LI:1/LAV:1/LAC:1/FD:1/RD:1/NC:2/PV:3)" target="_blank">(SL:1/M:1/O:0/S:2/ED:1/EE:1/A:1/ID:2/LC:2/LI:1/LAV:1/LAC:1/FD:1/RD:1/NC:2/PV:3)</a>
-          <br>
-          <a href="#exampleModalCenter" data-toggle="modal">How is Severity Risk calculated?</a>
-          <br>
-          2025 Security Strategy Evaluation Tool | Developed by <a href="https://hackpuntes.com" target="_blank"><span>Javier Olmedo</span></a> | Source Code on <a href="https://github.com/JavierOlmedo/OWASP-Calculator" target="_blank"><span>Github</span></a> repository.
+          2025 Cybersecurity Innovation Coverage Calculator | Modified by Idan Pinto | Based on OWASP Risk Calculator by <a href="https://hackpuntes.com" target="_blank"><span>Javier Olmedo</span></a> | Source on <a href="https://github.com/JavierOlmedo/OWASP-Calculator" target="_blank"><span>Github</span></a>
         </div>
       </section>
     </main>
