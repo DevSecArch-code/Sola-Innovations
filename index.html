@@ -23,52 +23,23 @@
     <main>
       <section>
         <h1>Cybersecurity Innovation Coverage Calculator</h1>
-        <canvas class="riskChart" id="riskChart" height="75"></canvas>
+        <canvas class="riskChart" id="riskChart" height="300"></canvas>
         <div class="risk RS">
-          <h4>0</h4>
+          <h4 id="scoreValue">0</h4>
         </div>
       </section>
 
-      <!-- SECURITY DOMAINS -->
+      <!-- CAPABILITY SELECTOR -->
       <div class="row">
-        <section>
-          <h5 class="border-bottom">Security Domains</h5>
-          <div class="row">
-            <div class="col-12">
-              <ul>
-                <li>Data Security</li>
-                <li>Identity Security</li>
-                <li>SaaS Security</li>
-                <li>External Attack Surface</li>
-                <li>Runtime Security</li>
-                <li>API Security</li>
-                <li>Threat Detection</li>
-                <li>Incident Response</li>
-                <li>Security Operations</li>
-                <li>Intelligence</li>
-                <li>Compliance</li>
-                <li>Code Security</li>
-              </ul>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <!-- CAPABILITIES -->
-      <div class="row">
-        <section>
-          <h5 class="border-bottom">Product Capabilities</h5>
-          <div class="row">
-            <div class="col-12">
-              <ul>
-                <li>Metadata (Configuration)</li>
-                <li>Events/Logs</li>
-                <li>Real-time Monitoring</li>
-                <li>Threat Detection</li>
-                <li>Data Enrichment</li>
-              </ul>
-            </div>
-          </div>
+        <section class="col-12">
+          <h5 class="border-bottom">Select Capability to Evaluate Domains</h5>
+          <select class="form-control" id="capabilitySelect" onchange="calculateInnovationScore()">
+            <option value="0">Metadata (Configuration)</option>
+            <option value="1">Events/Logs</option>
+            <option value="2">Real-time Monitoring</option>
+            <option value="3">Threat Detection</option>
+            <option value="4">Data Enrichment</option>
+          </select>
         </section>
       </div>
 
@@ -76,7 +47,7 @@
       <div class="row">
         <section>
           <h5 class="border-bottom">Innovation Coverage Score</h5>
-          <h6 class="IS nomargin">0</h6>
+          <h6 class="IS nomargin" id="innovationScore">0</h6>
         </section>
       </div>
 
@@ -92,7 +63,54 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/Chart.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/sweetalert.min.js"></script>
-    <script src="js/script.js"></script>
+    <script>
+      const securityDomains = [
+        "Data Security", "Identity Security", "SaaS Security", "External Attack Surface",
+        "Runtime Security", "API Security", "Threat Detection", "Incident Response",
+        "Security Operations", "Intelligence", "Compliance", "Code Security"
+      ];
+
+      const domainScores = [
+        [5, 3, 4, 4, 2, 3, 4, 5, 3, 2, 4, 3], // Metadata
+        [2, 3, 3, 4, 3, 4, 4, 5, 3, 2, 3, 2], // Events/Logs
+        [4, 3, 5, 3, 4, 3, 4, 5, 4, 2, 3, 4], // Real-time Monitoring
+        [3, 3, 4, 3, 4, 4, 5, 5, 5, 3, 3, 3], // Threat Detection
+        [3, 4, 3, 2, 3, 3, 4, 4, 3, 4, 4, 3]  // Data Enrichment
+      ];
+
+      const radarCtx = document.getElementById("riskChart").getContext("2d");
+      const radarChart = new Chart(radarCtx, {
+        type: 'radar',
+        data: {
+          labels: securityDomains,
+          datasets: [{
+            label: "Coverage Score",
+            backgroundColor: "rgba(0,123,255,0.2)",
+            borderColor: "rgba(0,123,255,1)",
+            pointBackgroundColor: "rgba(0,123,255,1)",
+            data: domainScores[0] // default to Metadata
+          }]
+        },
+        options: {
+          scale: {
+            ticks: {
+              beginAtZero: true,
+              max: 5
+            }
+          }
+        }
+      });
+
+      function calculateInnovationScore() {
+        const selectedIndex = document.getElementById("capabilitySelect").value;
+        const scores = domainScores[selectedIndex];
+        radarChart.data.datasets[0].data = scores;
+        radarChart.update();
+
+        const total = scores.reduce((sum, val) => sum + val, 0);
+        document.getElementById("innovationScore").textContent = total;
+        document.getElementById("scoreValue").textContent = total;
+      }
+    </script>
   </body>
 </html>
