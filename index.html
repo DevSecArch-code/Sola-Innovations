@@ -19,38 +19,49 @@
         background-color: #121212;
         color: #f1f1f1;
         margin: 0;
-        padding: 1rem;
+        padding: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       }
       h1, h5, h6, label {
         color: #ffffff;
       }
-      .form-control, .form-control:focus {
+      .form-control, .form-control:focus, .form-range {
         background-color: #2a2a2a;
         color: #ffffff;
         border-color: #444;
       }
       select.form-control {
-        width: 250px;
+        width: 220px;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
       }
       canvas {
-        max-width: 100%;
+        max-width: 720px;
+        margin: 0 auto 2rem auto;
+        display: block;
+      }
+      .score-box {
+        text-align: center;
+        margin: 1rem 0;
+        font-size: 1.5rem;
+        font-weight: bold;
       }
     </style>
   </head>
 
   <body>
-    <main>
-      <section>
+    <main class="container">
+      <section class="text-center">
         <h1>Cybersecurity Innovation Coverage Calculator</h1>
-        <canvas class="riskChart" id="riskChart" height="250"></canvas>
-        <div class="risk RS">
-          <h4 id="scoreValue">0</h4>
+        <canvas class="riskChart" id="riskChart" height="300"></canvas>
+        <div class="score-box">
+          <span>Total Score: <span id="scoreValue">0</span></span>
         </div>
       </section>
 
-      <div class="row mb-4">
-        <section class="col-12">
-          <h5 class="border-bottom">Select Capability to Evaluate Domains</h5>
+      <div class="row justify-content-center">
+        <section class="col-auto">
+          <h5>Select Capability</h5>
           <select class="form-control" id="capabilitySelect" onchange="calculateInnovationScore()">
             <option value="0">Metadata</option>
             <option value="1">Events</option>
@@ -61,25 +72,25 @@
         </section>
       </div>
 
-      <div class="row mb-4">
+      <div class="row mb-4 mt-4">
         <section class="col-12">
-          <h5 class="border-bottom">Customize Domain Scores</h5>
-          <div id="customScores" class="row"></div>
+          <h5>Adjust Per-Domain Scores</h5>
+          <div id="customScores" class="row gx-3 gy-2"></div>
         </section>
       </div>
 
-      <div class="row">
-        <section>
-          <h5 class="border-bottom">Innovation Coverage Score</h5>
-          <h6 class="IS nomargin" id="innovationScore">0</h6>
+      <div class="row justify-content-center">
+        <section class="col-auto">
+          <h6 class="IS">Innovation Coverage Score</h6>
+          <div class="score-box" id="innovationScore">0</div>
         </section>
       </div>
 
-      <section>
+      <footer class="text-center mt-4">
         <div>
-          2025 Cybersecurity Innovation Coverage Calculator | Modified by Idan Pinto | Based on OWASP Risk Calculator by <a href="https://hackpuntes.com" target="_blank"><span>Javier Olmedo</span></a> | Source on <a href="https://github.com/JavierOlmedo/OWASP-Calculator" target="_blank"><span>Github</span></a>
+          2025 Cybersecurity Innovation Coverage Calculator | Modified by Idan Pinto | Based on OWASP Risk Calculator by <a href="https://hackpuntes.com" target="_blank">Javier Olmedo</a> | Source on <a href="https://github.com/JavierOlmedo/OWASP-Calculator" target="_blank">Github</a>
         </div>
-      </section>
+      </footer>
     </main>
 
     <script src="js/jquery.min.js"></script>
@@ -97,7 +108,7 @@
         [2, 2, 3, 2, 2, 2, 3, 3, 2, 2, 2, 2],
         [3, 3, 4, 3, 4, 3, 4, 4, 3, 3, 3, 3],
         [4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4],
-        [4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4]
+        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
       ];
 
       let customScores = [...domainScores[0]];
@@ -117,6 +128,7 @@
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: { labels: { color: '#ffffff' } }
           },
@@ -147,7 +159,7 @@
         container.innerHTML = "";
         securityDomains.forEach((domain, i) => {
           const col = document.createElement("div");
-          col.className = "col-md-3 mb-3";
+          col.className = "col-md-3 mb-2";
 
           const label = document.createElement("label");
           label.innerText = domain;
@@ -156,8 +168,9 @@
           input.type = "range";
           input.min = 0;
           input.max = 5;
+          input.step = 1;
           input.value = customScores[i];
-          input.className = "form-range w-100";
+          input.className = "form-range";
           input.oninput = function () {
             customScores[i] = parseInt(this.value);
             updateChart();
