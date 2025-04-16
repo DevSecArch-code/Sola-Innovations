@@ -62,17 +62,17 @@
         font-weight: bold;
       }
       .domain-slider {
-        background: linear-gradient(to right, red 0%, orange 50%, lime 100%);
+        background: linear-gradient(to right, #a3a3a3 0%, #00c0ff 50%, #00ff9d 100%);
         border-radius: 10px;
-        height: 8px;
+        height: 10px;
         appearance: none;
         outline: none;
       }
       .domain-slider::-webkit-slider-thumb {
         appearance: none;
-        height: 20px;
-        width: 20px;
-        background: #fff;
+        height: 24px;
+        width: 24px;
+        background: #ffffff;
         border-radius: 50%;
         cursor: pointer;
         border: 2px solid #444;
@@ -85,11 +85,11 @@
       }
       .domain-status {
         margin-top: 0.25rem;
-        font-size: 0.9rem;
+        font-size: 0.95rem;
         font-weight: 500;
       }
       .low-status { color: #ff4c4c; }
-      .medium-status { color: #ffc107; }
+      .medium-status { color: #ffa500; }
       .high-status { color: #00e676; }
     </style>
   </head>
@@ -151,11 +151,11 @@
       const capabilityLabels = ["Metadata", "Events", "Monitoring", "Detection", "Enrichment"];
 
       let domainScores = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1],
         [2, 2, 3, 2, 2, 2, 3, 3, 2, 2, 2, 2],
         [3, 3, 4, 3, 4, 3, 4, 4, 3, 3, 3, 3],
-        [4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4],
-        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
+        [4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4]
       ];
 
       let customScores = [...domainScores[0]];
@@ -239,10 +239,12 @@
       }
 
       function getStatusLabel(score, capabilityIndex) {
-        if (score === 0) return "No " + capabilityLabels[capabilityIndex];
-        if (score <= 2) return "Basic " + capabilityLabels[capabilityIndex];
-        if (score <= 4) return "Moderate " + capabilityLabels[capabilityIndex];
-        return "Full " + capabilityLabels[capabilityIndex];
+        if (score === 0) return "Not Implemented";
+        if (score === 1) return "Has Metadata Only";
+        if (score === 2) return "Has Events";
+        if (score === 3) return "Has Monitoring";
+        if (score === 4) return "Includes Detection Logic";
+        return "Fully Enriched + Correlated";
       }
 
       function getStatusClass(score) {
