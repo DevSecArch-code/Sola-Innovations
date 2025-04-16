@@ -95,22 +95,9 @@
         </div>
       </section>
 
-      <div class="row justify-content-center">
-        <section class="col-auto">
-          <h5>Select Capability View</h5>
-          <select class="form-control" id="capabilitySelect" onchange="calculateInnovationScore()">
-            <option value="0">Metadata Collection</option>
-            <option value="1">Event Logging</option>
-            <option value="2">Real-Time Monitoring</option>
-            <option value="3">Threat Detection Logic</option>
-            <option value="4">Data Enrichment & Correlation</option>
-          </select>
-        </section>
-      </div>
-
       <div class="row mb-4 mt-4">
         <section class="col-12">
-          <h5>Domain-by-Domain Coverage Breakdown</h5>
+          <h5>Domain-by-Domain Capability Progress</h5>
           <div id="customScores" class="row gx-3 gy-3"></div>
         </section>
       </div>
@@ -140,23 +127,14 @@
       ];
 
       const capabilityLabels = [
-        "Metadata Collection",
-        "Event Logging",
-        "Real-Time Monitoring",
-        "Threat Detection Logic",
-        "Data Enrichment & Correlation"
+        "Metadata",
+        "Events",
+        "Monitoring",
+        "Detection",
+        "Enrichment"
       ];
 
-      let domainScores = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-        [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
-      ];
-
-      let customScores = [...domainScores[0]];
-      let currentCapabilityIndex = 0;
+      let perDomainCapabilityMatrix = securityDomains.map(() => [0, 0, 0, 0, 0]);
 
       const radarCtx = document.getElementById("riskChart").getContext("2d");
       const radarChart = new Chart(radarCtx, {
@@ -168,7 +146,7 @@
             backgroundColor: "rgba(100, 200, 255, 0.2)",
             borderColor: "rgba(100, 200, 255, 1)",
             pointBackgroundColor: "rgba(100, 200, 255, 1)",
-            data: customScores
+            data: securityDomains.map((_, i) => perDomainCapabilityMatrix[i].reduce((a, b) => a + b, 0))
           }]
         },
         options: {
@@ -184,8 +162,8 @@
               pointLabels: { color: '#ffffff', font: { size: 14 } },
               ticks: {
                 beginAtZero: true,
-                max: 5,
-                stepSize: 1,
+                max: 25,
+                stepSize: 5,
                 color: '#f1f6ff'
               }
             }
@@ -193,62 +171,46 @@
         }
       });
 
-      function calculateInnovationScore() {
-        currentCapabilityIndex = parseInt(document.getElementById("capabilitySelect").value);
-        customScores = [...domainScores[currentCapabilityIndex]];
-        updateCustomSliders();
-        updateChart();
-      }
-
       function updateCustomSliders() {
         const container = document.getElementById("customScores");
         container.innerHTML = "";
         securityDomains.forEach((domain, i) => {
           const col = document.createElement("div");
-          col.className = "col-md-3 mb-4";
+          col.className = "col-md-4 mb-4";
 
           const label = document.createElement("label");
           label.className = "domain-label";
           label.innerText = domain;
-
-          const input = document.createElement("input");
-          input.type = "range";
-          input.min = 0;
-          input.max = 5;
-          input.step = 1;
-          input.value = customScores[i];
-          input.className = "domain-slider w-100";
-          input.oninput = function () {
-            customScores[i] = parseInt(this.value);
-            updateChart();
-            statusSpan.innerText = getStatusLabel(this.value);
-          };
-
-          const statusSpan = document.createElement("div");
-          statusSpan.className = 'domain-status';
-          statusSpan.innerText = getStatusLabel(customScores[i]);
-
           col.appendChild(label);
-          col.appendChild(input);
-          col.appendChild(statusSpan);
+
+          capabilityLabels.forEach((cap, j) => {
+            const dropdown = document.createElement("select");
+            dropdown.className = "form-control mt-1 mb-1";
+            dropdown.innerHTML = "";
+            for (let k = 0; k <= 5; k++) {
+              const opt = document.createElement("option");
+              opt.value = k;
+              opt.text = `${cap} Level ${k}`;
+              if (perDomainCapabilityMatrix[i][j] === k) opt.selected = true;
+              dropdown.appendChild(opt);
+            }
+            dropdown.onchange = function () {
+              perDomainCapabilityMatrix[i][j] = parseInt(this.value);
+              updateChart();
+            };
+            col.appendChild(dropdown);
+          });
+
           container.appendChild(col);
         });
       }
 
-      function getStatusLabel(score) {
-        if (score === 0) return "No Coverage";
-        if (score === 1) return "Metadata Captured";
-        if (score === 2) return "Logs Collected";
-        if (score === 3) return "Monitored in Real-Time";
-        if (score === 4) return "Threat Detection Enabled";
-        return "Fully Enriched & Correlated";
-      }
-
       function updateChart() {
-        radarChart.data.datasets[0].data = customScores;
+        const scores = perDomainCapabilityMatrix.map(row => row.reduce((a, b) => a + b, 0));
+        radarChart.data.datasets[0].data = scores;
         radarChart.update();
 
-        const total = customScores.reduce((sum, val) => sum + val, 0);
+        const total = scores.reduce((a, b) => a + b, 0);
         document.getElementById("innovationScore").textContent = total;
         document.getElementById("scoreValue").textContent = total;
       }
