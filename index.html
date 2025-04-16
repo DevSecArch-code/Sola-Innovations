@@ -36,9 +36,9 @@
         font-size: 1rem;
       }
       label {
-        font-size: 0.95rem;
-        font-weight: 500;
-        color: #ccc;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #ffffff;
       }
       .form-control, .form-control:focus, .form-range {
         background-color: #2a2a2a;
@@ -80,8 +80,17 @@
       .domain-label {
         font-weight: bold;
         margin-bottom: 0.25rem;
-        color: #f1f1f1;
+        color: #ffffff;
+        font-size: 1.05rem;
       }
+      .domain-status {
+        margin-top: 0.25rem;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+      .low-status { color: #ff4c4c; }
+      .medium-status { color: #ffc107; }
+      .high-status { color: #00e676; }
     </style>
   </head>
 
@@ -172,7 +181,7 @@
             r: {
               angleLines: { color: '#444' },
               grid: { color: '#444' },
-              pointLabels: { color: '#ffffff' },
+              pointLabels: { color: '#ffffff', font: { size: 13 } },
               ticks: {
                 beginAtZero: true,
                 max: 5,
@@ -211,12 +220,31 @@
           input.oninput = function () {
             customScores[i] = parseInt(this.value);
             updateChart();
+            statusSpan.innerText = getStatusLabel(this.value);
+            statusSpan.className = 'domain-status ' + getStatusClass(this.value);
           };
+
+          const statusSpan = document.createElement("div");
+          statusSpan.className = 'domain-status ' + getStatusClass(customScores[i]);
+          statusSpan.innerText = getStatusLabel(customScores[i]);
 
           col.appendChild(label);
           col.appendChild(input);
+          col.appendChild(statusSpan);
           container.appendChild(col);
         });
+      }
+
+      function getStatusLabel(score) {
+        if (score <= 1) return "Low Coverage";
+        if (score <= 3) return "Medium Coverage";
+        return "High Coverage";
+      }
+
+      function getStatusClass(score) {
+        if (score <= 1) return "low-status";
+        if (score <= 3) return "medium-status";
+        return "high-status";
       }
 
       function updateChart() {
