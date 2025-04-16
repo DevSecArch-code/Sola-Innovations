@@ -3,51 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cybersecurity Innovation Coverage Tracker</title>
+  <title>Cybersecurity Coverage Calculator</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
     body {
-      background-color: #0f1117;
+      background-color: #0e0e15;
       color: #f1f6ff;
       font-family: 'Segoe UI', sans-serif;
       padding: 2rem;
     }
     h1 {
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 2rem;
     }
     .domain-card {
       background-color: #1a1d2e;
       border-radius: 8px;
       padding: 1rem;
-      height: 100%;
+      margin-bottom: 1.5rem;
     }
     .form-select {
       background-color: #1e1e2f;
       color: white;
       border-color: #333;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
     }
     .progress-bar {
       font-size: 0.85rem;
     }
     canvas {
-      max-width: 720px;
+      max-width: 800px;
       margin: 2rem auto;
       display: block;
     }
   </style>
 </head>
 <body>
+  <h1>Cybersecurity Innovation Coverage Tracker</h1>
+  <canvas id="radarChart" height="300"></canvas>
+  <div class="text-center fw-bold my-3">Total Innovation Score: <span id="totalScore">0</span>/60</div>
+
   <div class="container">
-    <h1 class="text-center">Cybersecurity Innovation Coverage Tracker</h1>
-
-    <canvas id="radarChart" height="300"></canvas>
-    <div class="text-center my-3 fw-bold">Innovation Score: <span id="totalScore">0</span>/60</div>
-
-    <div id="domainCards" class="row row-cols-1 row-cols-md-3 g-4 mt-4"></div>
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="domainCards"></div>
   </div>
 
   <script>
@@ -68,12 +66,12 @@
 
     const scores = Array(domains.length).fill(0);
 
-    const chart = new Chart(document.getElementById("radarChart"), {
+    const radarChart = new Chart(document.getElementById("radarChart"), {
       type: "radar",
       data: {
         labels: domains,
         datasets: [{
-          label: "Coverage",
+          label: "Coverage Level",
           data: scores,
           backgroundColor: "rgba(100, 200, 255, 0.2)",
           borderColor: "rgba(100, 200, 255, 1)",
@@ -81,41 +79,36 @@
         }]
       },
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
           r: {
             beginAtZero: true,
             max: 5,
-            ticks: {
-              stepSize: 1,
-              color: "#f1f6ff"
-            },
-            pointLabels: {
-              color: "#ffffff",
-              font: { size: 13 }
-            },
+            ticks: { stepSize: 1, color: "#f1f6ff" },
             grid: { color: "#333" },
-            angleLines: { color: "#333" }
+            angleLines: { color: "#333" },
+            pointLabels: { color: "#fff", font: { size: 13 } }
           }
         },
         plugins: {
           legend: { labels: { color: "#f1f6ff" } }
-        },
-        responsive: true,
-        maintainAspectRatio: false
+        }
       }
     });
 
-    function renderDomainCards() {
+    function renderCards() {
       const container = document.getElementById("domainCards");
       container.innerHTML = "";
       domains.forEach((domain, idx) => {
         const col = document.createElement("div");
         col.className = "col";
         col.innerHTML = `
-          <div class="domain-card h-100">
+          <div class="domain-card">
             <h6 class="fw-bold">${domain}</h6>
             <select class="form-select mb-2" onchange="updateScore(${idx}, this.value)">
-              ${maturityOptions.map((opt, i) => `<option value="${i}">${opt}</option>`).join("")}
+              ${maturityOptions.map((label, i) =>
+                `<option value="${i}">${label}</option>`).join("")}
             </select>
             <div class="progress">
               <div class="progress-bar bg-info" id="progress-${idx}" style="width: 0%">Not Covered</div>
@@ -128,18 +121,19 @@
 
     function updateScore(index, value) {
       scores[index] = parseInt(value);
-      document.getElementById(`progress-${index}`).style.width = `${(value * 20)}%`;
-      document.getElementById(`progress-${index}`).textContent = maturityOptions[value];
+      const progress = document.getElementById(`progress-${index}`);
+      progress.style.width = `${value * 20}%`;
+      progress.textContent = maturityOptions[value];
       updateChart();
     }
 
     function updateChart() {
-      chart.data.datasets[0].data = scores;
-      chart.update();
+      radarChart.data.datasets[0].data = scores;
+      radarChart.update();
       document.getElementById("totalScore").textContent = scores.reduce((a, b) => a + b, 0);
     }
 
-    renderDomainCards();
+    renderCards();
     updateChart();
   </script>
 </body>
