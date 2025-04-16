@@ -120,7 +120,7 @@
       <div class="row mb-4 mt-4">
         <section class="col-12">
           <h5>Adjust Per-Domain Scores</h5>
-          <div id="customScores" class="row gx-3 gy-2"></div>
+          <div id="customScores" class="row gx-3 gy-3"></div>
         </section>
       </div>
 
@@ -148,6 +148,8 @@
         "Security Operations", "Intelligence", "Compliance", "Code Security"
       ];
 
+      const capabilityLabels = ["Metadata", "Events", "Monitoring", "Detection", "Enrichment"];
+
       let domainScores = [
         [1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1],
         [2, 2, 3, 2, 2, 2, 3, 3, 2, 2, 2, 2],
@@ -157,6 +159,7 @@
       ];
 
       let customScores = [...domainScores[0]];
+      let currentCapabilityIndex = 0;
 
       const radarCtx = document.getElementById("riskChart").getContext("2d");
       const radarChart = new Chart(radarCtx, {
@@ -193,8 +196,8 @@
       });
 
       function calculateInnovationScore() {
-        const selectedIndex = parseInt(document.getElementById("capabilitySelect").value);
-        customScores = [...domainScores[selectedIndex]];
+        currentCapabilityIndex = parseInt(document.getElementById("capabilitySelect").value);
+        customScores = [...domainScores[currentCapabilityIndex]];
         updateCustomSliders();
         updateChart();
       }
@@ -204,7 +207,7 @@
         container.innerHTML = "";
         securityDomains.forEach((domain, i) => {
           const col = document.createElement("div");
-          col.className = "col-md-3 mb-3";
+          col.className = "col-md-3 mb-4";
 
           const label = document.createElement("label");
           label.className = "domain-label";
@@ -220,13 +223,13 @@
           input.oninput = function () {
             customScores[i] = parseInt(this.value);
             updateChart();
-            statusSpan.innerText = getStatusLabel(this.value);
+            statusSpan.innerText = getStatusLabel(this.value, currentCapabilityIndex);
             statusSpan.className = 'domain-status ' + getStatusClass(this.value);
           };
 
           const statusSpan = document.createElement("div");
           statusSpan.className = 'domain-status ' + getStatusClass(customScores[i]);
-          statusSpan.innerText = getStatusLabel(customScores[i]);
+          statusSpan.innerText = getStatusLabel(customScores[i], currentCapabilityIndex);
 
           col.appendChild(label);
           col.appendChild(input);
@@ -235,10 +238,11 @@
         });
       }
 
-      function getStatusLabel(score) {
-        if (score <= 1) return "Low Coverage";
-        if (score <= 3) return "Medium Coverage";
-        return "High Coverage";
+      function getStatusLabel(score, capabilityIndex) {
+        if (score === 0) return "No " + capabilityLabels[capabilityIndex];
+        if (score <= 2) return "Basic " + capabilityLabels[capabilityIndex];
+        if (score <= 4) return "Moderate " + capabilityLabels[capabilityIndex];
+        return "Full " + capabilityLabels[capabilityIndex];
       }
 
       function getStatusClass(score) {
