@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="css/style.css" />
     <style>
       body {
-        background-color: #121212;
-        color: #f1f1f1;
+        background-color: #0e0e15;
+        color: #f1f6ff;
         margin: 0;
         padding: 2rem;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,24 +26,17 @@
         font-size: 2rem;
         font-weight: bold;
         margin-bottom: 1rem;
-      }
-      h5 {
-        font-size: 1.25rem;
-        font-weight: bold;
-        margin-top: 1rem;
-      }
-      h6 {
-        font-size: 1rem;
-      }
-      label {
-        font-size: 1.05rem;
-        font-weight: 600;
         color: #ffffff;
+      }
+      h5, h6, label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #f1f6ff;
       }
       .form-control, .form-control:focus, .form-range {
-        background-color: #2a2a2a;
+        background-color: #1e1e2f;
         color: #ffffff;
-        border-color: #444;
+        border-color: #555;
       }
       select.form-control {
         width: 220px;
@@ -51,7 +44,7 @@
         margin-bottom: 1rem;
       }
       canvas {
-        max-width: 720px;
+        max-width: 680px;
         margin: 0 auto 2rem auto;
         display: block;
       }
@@ -62,7 +55,7 @@
         font-weight: bold;
       }
       .domain-slider {
-        background: linear-gradient(to right, #a3a3a3 0%, #00c0ff 50%, #00ff9d 100%);
+        background: linear-gradient(to right, #d0e8ff 0%, #6cbfff 50%, #2d8eff 100%);
         border-radius: 10px;
         height: 10px;
         appearance: none;
@@ -70,8 +63,8 @@
       }
       .domain-slider::-webkit-slider-thumb {
         appearance: none;
-        height: 24px;
-        width: 24px;
+        height: 20px;
+        width: 20px;
         background: #ffffff;
         border-radius: 50%;
         cursor: pointer;
@@ -80,17 +73,15 @@
       .domain-label {
         font-weight: bold;
         margin-bottom: 0.25rem;
-        color: #ffffff;
+        color: #f1f6ff;
         font-size: 1.05rem;
       }
       .domain-status {
         margin-top: 0.25rem;
         font-size: 0.95rem;
         font-weight: 500;
+        color: #9ecbff;
       }
-      .low-status { color: #ff4c4c; }
-      .medium-status { color: #ffa500; }
-      .high-status { color: #00e676; }
     </style>
   </head>
 
@@ -106,20 +97,20 @@
 
       <div class="row justify-content-center">
         <section class="col-auto">
-          <h5>Select Capability</h5>
+          <h5>Select Capability View</h5>
           <select class="form-control" id="capabilitySelect" onchange="calculateInnovationScore()">
-            <option value="0">Metadata</option>
-            <option value="1">Events</option>
-            <option value="2">Monitoring</option>
-            <option value="3">Detection</option>
-            <option value="4">Enrichment</option>
+            <option value="0">Metadata Collection</option>
+            <option value="1">Event Logging</option>
+            <option value="2">Real-Time Monitoring</option>
+            <option value="3">Threat Detection Logic</option>
+            <option value="4">Data Enrichment & Correlation</option>
           </select>
         </section>
       </div>
 
       <div class="row mb-4 mt-4">
         <section class="col-12">
-          <h5>Adjust Per-Domain Scores</h5>
+          <h5>Domain-by-Domain Coverage Breakdown</h5>
           <div id="customScores" class="row gx-3 gy-3"></div>
         </section>
       </div>
@@ -148,14 +139,20 @@
         "Security Operations", "Intelligence", "Compliance", "Code Security"
       ];
 
-      const capabilityLabels = ["Metadata", "Events", "Monitoring", "Detection", "Enrichment"];
+      const capabilityLabels = [
+        "Metadata Collection",
+        "Event Logging",
+        "Real-Time Monitoring",
+        "Threat Detection Logic",
+        "Data Enrichment & Correlation"
+      ];
 
       let domainScores = [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [1, 1, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1],
-        [2, 2, 3, 2, 2, 2, 3, 3, 2, 2, 2, 2],
-        [3, 3, 4, 3, 4, 3, 4, 4, 3, 3, 3, 3],
-        [4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 4, 4]
+        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+        [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+        [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]
       ];
 
       let customScores = [...domainScores[0]];
@@ -168,9 +165,9 @@
           labels: securityDomains,
           datasets: [{
             label: "Coverage Score",
-            backgroundColor: "rgba(0, 255, 100, 0.2)",
-            borderColor: "rgba(0, 255, 100, 1)",
-            pointBackgroundColor: "rgba(0, 255, 100, 1)",
+            backgroundColor: "rgba(100, 200, 255, 0.2)",
+            borderColor: "rgba(100, 200, 255, 1)",
+            pointBackgroundColor: "rgba(100, 200, 255, 1)",
             data: customScores
           }]
         },
@@ -178,17 +175,18 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: { labels: { color: '#ffffff' } }
+            legend: { labels: { color: '#f1f6ff' } }
           },
           scales: {
             r: {
-              angleLines: { color: '#444' },
-              grid: { color: '#444' },
-              pointLabels: { color: '#ffffff', font: { size: 13 } },
+              angleLines: { color: '#333' },
+              grid: { color: '#333' },
+              pointLabels: { color: '#ffffff', font: { size: 14 } },
               ticks: {
                 beginAtZero: true,
                 max: 5,
-                color: '#ffffff'
+                stepSize: 1,
+                color: '#f1f6ff'
               }
             }
           }
@@ -223,13 +221,12 @@
           input.oninput = function () {
             customScores[i] = parseInt(this.value);
             updateChart();
-            statusSpan.innerText = getStatusLabel(this.value, currentCapabilityIndex);
-            statusSpan.className = 'domain-status ' + getStatusClass(this.value);
+            statusSpan.innerText = getStatusLabel(this.value);
           };
 
           const statusSpan = document.createElement("div");
-          statusSpan.className = 'domain-status ' + getStatusClass(customScores[i]);
-          statusSpan.innerText = getStatusLabel(customScores[i], currentCapabilityIndex);
+          statusSpan.className = 'domain-status';
+          statusSpan.innerText = getStatusLabel(customScores[i]);
 
           col.appendChild(label);
           col.appendChild(input);
@@ -238,19 +235,13 @@
         });
       }
 
-      function getStatusLabel(score, capabilityIndex) {
-        if (score === 0) return "Not Implemented";
-        if (score === 1) return "Has Metadata Only";
-        if (score === 2) return "Has Events";
-        if (score === 3) return "Has Monitoring";
-        if (score === 4) return "Includes Detection Logic";
-        return "Fully Enriched + Correlated";
-      }
-
-      function getStatusClass(score) {
-        if (score <= 1) return "low-status";
-        if (score <= 3) return "medium-status";
-        return "high-status";
+      function getStatusLabel(score) {
+        if (score === 0) return "No Coverage";
+        if (score === 1) return "Metadata Captured";
+        if (score === 2) return "Logs Collected";
+        if (score === 3) return "Monitored in Real-Time";
+        if (score === 4) return "Threat Detection Enabled";
+        return "Fully Enriched & Correlated";
       }
 
       function updateChart() {
