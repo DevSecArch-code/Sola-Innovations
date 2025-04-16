@@ -54,22 +54,6 @@
         font-size: 1.5rem;
         font-weight: bold;
       }
-      .domain-slider {
-        background: linear-gradient(to right, #d0e8ff 0%, #6cbfff 50%, #2d8eff 100%);
-        border-radius: 10px;
-        height: 10px;
-        appearance: none;
-        outline: none;
-      }
-      .domain-slider::-webkit-slider-thumb {
-        appearance: none;
-        height: 20px;
-        width: 20px;
-        background: #ffffff;
-        border-radius: 50%;
-        cursor: pointer;
-        border: 2px solid #444;
-      }
       .domain-label {
         font-weight: bold;
         margin-bottom: 0.25rem;
@@ -126,15 +110,9 @@
         "Security Operations", "Intelligence", "Compliance", "Code Security"
       ];
 
-      const capabilityLabels = [
-        "Metadata",
-        "Events",
-        "Monitoring",
-        "Detection",
-        "Enrichment"
-      ];
+      const capabilityLabels = ["None", "Metadata", "Metadata + Events", "+ Monitoring", "+ Detection", "+ Enrichment"];
 
-      let perDomainCapabilityMatrix = securityDomains.map(() => [0, 0, 0, 0, 0]);
+      let perDomainCapabilityMatrix = securityDomains.map(() => 0);
 
       const radarCtx = document.getElementById("riskChart").getContext("2d");
       const radarChart = new Chart(radarCtx, {
@@ -146,7 +124,7 @@
             backgroundColor: "rgba(100, 200, 255, 0.2)",
             borderColor: "rgba(100, 200, 255, 1)",
             pointBackgroundColor: "rgba(100, 200, 255, 1)",
-            data: securityDomains.map((_, i) => perDomainCapabilityMatrix[i].reduce((a, b) => a + b, 0))
+            data: perDomainCapabilityMatrix
           }]
         },
         options: {
@@ -162,8 +140,8 @@
               pointLabels: { color: '#ffffff', font: { size: 14 } },
               ticks: {
                 beginAtZero: true,
-                max: 25,
-                stepSize: 5,
+                max: 5,
+                stepSize: 1,
                 color: '#f1f6ff'
               }
             }
@@ -176,41 +154,38 @@
         container.innerHTML = "";
         securityDomains.forEach((domain, i) => {
           const col = document.createElement("div");
-          col.className = "col-md-4 mb-4";
+          col.className = "col-md-3 mb-4";
 
           const label = document.createElement("label");
           label.className = "domain-label";
           label.innerText = domain;
           col.appendChild(label);
 
-          capabilityLabels.forEach((cap, j) => {
-            const dropdown = document.createElement("select");
-            dropdown.className = "form-control mt-1 mb-1";
-            dropdown.innerHTML = "";
-            for (let k = 0; k <= 5; k++) {
-              const opt = document.createElement("option");
-              opt.value = k;
-              opt.text = `${cap} Level ${k}`;
-              if (perDomainCapabilityMatrix[i][j] === k) opt.selected = true;
-              dropdown.appendChild(opt);
-            }
-            dropdown.onchange = function () {
-              perDomainCapabilityMatrix[i][j] = parseInt(this.value);
-              updateChart();
-            };
-            col.appendChild(dropdown);
+          const dropdown = document.createElement("select");
+          dropdown.className = "form-control mt-1 mb-1";
+          capabilityLabels.forEach((labelText, level) => {
+            const opt = document.createElement("option");
+            opt.value = level;
+            opt.text = labelText;
+            if (perDomainCapabilityMatrix[i] === level) opt.selected = true;
+            dropdown.appendChild(opt);
           });
+
+          dropdown.onchange = function () {
+            perDomainCapabilityMatrix[i] = parseInt(this.value);
+            updateChart();
+          };
+          col.appendChild(dropdown);
 
           container.appendChild(col);
         });
       }
 
       function updateChart() {
-        const scores = perDomainCapabilityMatrix.map(row => row.reduce((a, b) => a + b, 0));
-        radarChart.data.datasets[0].data = scores;
+        radarChart.data.datasets[0].data = [...perDomainCapabilityMatrix];
         radarChart.update();
 
-        const total = scores.reduce((a, b) => a + b, 0);
+        const total = perDomainCapabilityMatrix.reduce((a, b) => a + b, 0);
         document.getElementById("innovationScore").textContent = total;
         document.getElementById("scoreValue").textContent = total;
       }
